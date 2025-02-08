@@ -84,7 +84,7 @@ function createPlaceholderCard() {
 // Function to display search results
 function displaySearchResults(movies) {
   const resultsContainer = document.querySelector('.results-container');
-  resultsContainer.innerHTML = ''; // Clear previous results
+  resultsContainer.innerHTML = '';
 
   if (movies.length === 0) {
     const noResults = document.createElement('p');
@@ -103,7 +103,7 @@ function displaySearchResults(movies) {
 // Function to create pagination controls
 function createPaginationControls(currentPage, totalPages) {
   const paginationContainer = document.querySelector('.pagination');
-  paginationContainer.innerHTML = ''; // Clear previous pagination
+  paginationContainer.innerHTML = '';
 
   if (totalPages <= 1) {
     return;
@@ -159,13 +159,13 @@ function sortMovies(movies, sortBy) {
 
 // Function to fetch movies
 function fetchMovies(page = 1) {
-  const query = document.getElementById('search').value;  
+  const query = document.getElementById('search').value;
   const sortBy = document.getElementById('sort_by').value;
   const url = `/api/search.php?query=${encodeURIComponent(query)}&page=${page}`;
 
   // Show placeholder cards
   const resultsContainer = document.querySelector('.results-container');
-  resultsContainer.innerHTML = ''; // Clear previous results
+  resultsContainer.innerHTML = '';
   for (let i = 0; i < 20; i++) {
     const placeholderCard = createPlaceholderCard();
     resultsContainer.appendChild(placeholderCard);
@@ -199,7 +199,7 @@ function fetchMovies(page = 1) {
 }
 
 // Search form submission
-document.getElementById('searchForm').addEventListener('submit', function(event) {
+document.getElementById('searchForm').addEventListener('submit', function (event) {
   event.preventDefault(); // Prevent the default form submission
   fetchMovies(); // Fetch movies for the first page
 });
