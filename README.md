@@ -28,8 +28,24 @@ Before you begin, ensure you have the following:
    - Register at [TMDb Developer](https://developer.themoviedb.org/).
    - Obtain your API key.
 
+## Project Structure
+```bash
+/movie-search-app
+├── /css
+│   └── styles.css      # Styling for the application
+├── /js
+│   └── script.js       # Frontend logic (AJAX, favorites, etc.)
+├── /php
+│   └── search.php      # PHP backend proxy for TMDb API
+├── index.html          # Main HTML file
+├── README.md           # Project documentation
+```
+
 ## Setup Instructions
 
 1. Clone this repository or download the project folder.
    ```bash
    git clone https://github.com/I90rche/movie-search-app.git
+
+---
+### Enjoy using the Movie Search App! 🎥🍿

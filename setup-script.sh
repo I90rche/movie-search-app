@@ -36,6 +36,24 @@ npm install
 echo "Installing PHP dependencies..."
 composer install
 
+# Determine the operating system
+OS="$(uname -s)"
+
+# Start npm in a new terminal
+if [[ "$OS" == "Linux" ]]; then
+  echo "Starting npm in a new terminal (Linux)..."
+  gnome-terminal -- bash -c "npm start; exec bash"
+elif [[ "$OS" == "Darwin" ]]; then
+  echo "Starting npm in a new terminal (macOS)..."
+  osascript -e 'tell application "Terminal" to do script "cd '$PWD' && npm start"'
+elif [[ "$OS" =~ MINGW* || "$OS" =~ CYGWIN* || "$OS" == "Windows_NT" ]]; then
+  echo "Starting npm in a new terminal (Windows)..."
+  start cmd /k "npm start"
+else
+  echo "Unsupported OS: $OS"
+  exit 1
+fi
+
 # Start PHP built-in server
 echo "Starting PHP built-in server at http://localhost:$PHP_SERVER_PORT..."
 php -S localhost:$PHP_SERVER_PORT
