@@ -2,6 +2,10 @@
 
 Test app for job interview with Software Yard.
 
+## Notes about the requirements
+
+- The API did not provide runtime, and there is only one description available.
+
 ## Features
 
 - **Search Movies**: Search for movies by title using a search bar.
@@ -41,7 +45,7 @@ Before you begin, ensure you have the following:
 ├── /js
 │   └── script.js       # Frontend logic (AJAX, favorites, etc.)
 ├── /php
-│   └── search.php      # PHP backend proxy for TMDb API
+│   └── routes.php      # PHP backend proxy for TMDb API
 ├── index.html          # Main HTML file
 ├── README.md           # Project documentation
 ```

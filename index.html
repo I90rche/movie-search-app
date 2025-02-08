@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="apple-mobile-web-app-title" content="Movie Search" />
+    <meta name="apple-mobile-web-app-title" content="MovieSearch" />
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -95,6 +95,58 @@
         </a>
       </p>
     </footer>
+
+    <div
+      id="toastContainer"
+      class="position-fixed bottom-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      <!-- Toasts will be appended here -->
+    </div>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="movieModal"
+      tabindex="-1"
+      aria-labelledby="movieModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="movieModalLabel">Movie Details</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-4">
+                <img
+                  id="modalMoviePoster"
+                  src=""
+                  alt="Movie Poster"
+                  class="img-fluid"
+                />
+              </div>
+              <div class="col-md-8">
+                <h5 id="modalMovieTitle"></h5>
+                <div id="modalMovieGenres" class="mb-2"></div>
+                <p id="modalMovieReleaseDate"></p>
+                <p id="modalMovieRating"></p>
+                <p id="modalMovieRuntime"></p>
+                <p id="modalMovieOverview"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="assets/js/main.js"></script>
   </body>
 </html>

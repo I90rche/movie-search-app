@@ -11,8 +11,10 @@ function createMovieCard(movie) {
 
   const img = document.createElement('img');
   img.src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'assets/images/placeholder.svg';
-  img.className = 'card-img-top';
+  img.className = 'card-img-top img-fluid';
   img.alt = movie.title;
+  img.style.cursor = 'pointer';
+  img.addEventListener('click', () => fetchMovieDetails(movie.id));
 
   const cardBodyDiv = document.createElement('div');
   cardBodyDiv.className = 'card-body d-flex flex-column';
@@ -23,7 +25,7 @@ function createMovieCard(movie) {
 
   const cardText1 = document.createElement('p');
   cardText1.className = 'card-text';
-  cardText1.textContent = `Released: ${movie.release_date} | Rating: ${movie.vote_average}/10`;
+  cardText1.textContent = `Released: ${movie.release_date} | Rating: ${movie.vote_average.toFixed(1)}/10`;
 
   const cardText2 = document.createElement('p');
   cardText2.className = 'card-text flex-grow-1';
@@ -157,11 +159,87 @@ function sortMovies(movies, sortBy) {
   }
 }
 
+// Function to show error message using Bootstrap toast
+function showErrorToast(message) {
+  const toastContainer = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast align-items-center text-bg-danger border-0 mt-1';
+  toast.role = 'alert';
+  toast.ariaLive = 'assertive';
+  toast.ariaAtomic = 'true';
+
+  const toastBody = document.createElement('div');
+  toastBody.className = 'd-flex';
+  toastBody.innerHTML = `
+    <div class="toast-body">
+      ${message}
+    </div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+  `;
+
+  toast.appendChild(toastBody);
+  toastContainer.appendChild(toast);
+
+  const bootstrapToast = new bootstrap.Toast(toast);
+  bootstrapToast.show();
+}
+
+// Function to open movie modal
+function openMovieModal(movie) {
+  const modalTitle = document.getElementById('movieModalLabel');
+  const modalPoster = document.getElementById('modalMoviePoster');
+  const modalMovieTitle = document.getElementById('modalMovieTitle');
+  const modalMovieReleaseDate = document.getElementById('modalMovieReleaseDate');
+  const modalMovieRating = document.getElementById('modalMovieRating');
+  const modalMovieRuntime = document.getElementById('modalMovieRuntime');
+  const modalMovieOverview = document.getElementById('modalMovieOverview');
+  const modalMovieGenres = document.getElementById('modalMovieGenres');
+
+  modalTitle.textContent = movie.title;
+  modalPoster.src = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'assets/images/placeholder.svg';
+  modalMovieTitle.textContent = movie.title;
+  modalMovieReleaseDate.textContent = `Release Date: ${movie.release_date}`;
+  modalMovieRating.textContent = `Rating: ${movie.vote_average.toFixed(1)}/10`;
+  modalMovieRuntime.textContent = `Runtime: ${movie.runtime} minutes`;
+  modalMovieOverview.textContent = movie.overview;
+
+  modalMovieGenres.innerHTML = '';
+  movie.genres.forEach(genre => {
+    const genreBadge = document.createElement('span');
+    genreBadge.className = 'badge text-bg-info me-1';
+    genreBadge.textContent = genre.name;
+    modalMovieGenres.appendChild(genreBadge);
+  });
+
+  const movieModal = new bootstrap.Modal(document.getElementById('movieModal'));
+  movieModal.show();
+}
+
+// Function to fetch movie details
+async function fetchMovieDetails(movieId) {
+  const url = `/api/routes.php?action=details&movie_id=${movieId}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('Error:', data.error);
+      showErrorToast(data.error);
+    } else {
+      openMovieModal(data); // Open the modal with the movie details
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showErrorToast('An error occurred while fetching the movie details.');
+  }
+}
+
 // Function to fetch movies
-function fetchMovies(page = 1) {
+async function fetchMovies(page = 1) {
   const query = document.getElementById('search').value;
   const sortBy = document.getElementById('sort_by').value;
-  const url = `/api/search.php?query=${encodeURIComponent(query)}&page=${page}`;
+  const url = `/api/routes.php?action=search&query=${encodeURIComponent(query)}&page=${page}`;
 
   // Show placeholder cards
   const resultsContainer = document.querySelector('.results-container');
@@ -176,26 +254,30 @@ function fetchMovies(page = 1) {
   searchButton.disabled = true;
   searchButton.innerHTML = '<span class="spinner-border spinner-border-sm p-0 m-0" aria-hidden="true"></span><span role="status">Searching...</span>';
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        console.error('Error:', data.error);
-      } else {
-        const sortedMovies = sortMovies(data.results, sortBy); // Sort the search results
-        displaySearchResults(data.results); // Display the search results
-        createPaginationControls(page, data.total_pages); // Create pagination controls
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of the page
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    })
-    .finally(() => {
-      // Re-enable search button and hide loading spinner
-      searchButton.disabled = false;
-      searchButton.innerHTML = 'Search';
-    });
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('Error:', data.error);
+      showErrorToast(data.error);
+      const resultsContainer = document.querySelector('.results-container');
+      resultsContainer.innerHTML = '';
+    } else {
+      const sortedMovies = sortMovies(data.results, sortBy); // Sort the search results
+      displaySearchResults(sortedMovies); // Display the search results
+      createPaginationControls(page, data.total_pages); // Create pagination controls
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of the page
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showErrorToast('An error occurred while fetching the movies.');
+    const resultsContainer = document.querySelector('.results-container');
+    resultsContainer.innerHTML = '';
+  }
+  // Re-enable search button and hide loading spinner
+  searchButton.disabled = false;
+  searchButton.innerHTML = 'Search';
 }
 
 // Search form submission
