@@ -1,7 +1,7 @@
 // Import the Bootstrap bundle
 import "../../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js";
 
-let allMovies = []; // Store all fetched movies
+let allMovies = [];
 
 // Function to create a movie card
 function createMovieCard(movie) {
@@ -168,9 +168,9 @@ function sortMovies(movies, sortBy) {
     case 'title_desc':
       return movies.sort((a, b) => b.title.localeCompare(a.title, 'en', { sensitivity: 'base' }));
     case 'release_date_asc':
-      return movies.sort((a, b) => new Date(a.release_date) - new Date(b.release_date));
+      return movies.sort((a, b) => new Date(a.release_date).getTime() - new Date(b.release_date).getTime());
     case 'release_date_desc':
-      return movies.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
+      return movies.sort((a, b) => new Date(b.release_date).getTime() - new Date(a.release_date).getTime());
     default:
       return movies;
   }
